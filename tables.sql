@@ -1,0 +1,10 @@
+CREATE TABLE webcam_data (
+  id SERIAL PRIMARY KEY,
+  image_object_key VARCHAR(255) NOT NULL,
+  topic VARCHAR(255) NOT NULL,
+  metadata JSONB NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  used BOOLEAN DEFAULT FALSE
+);
+
+
