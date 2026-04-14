@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -202,7 +203,7 @@ func WebcamCreate(w http.ResponseWriter, r *http.Request) {
 
 	imageObjectKey := fmt.Sprintf("image-%s.jpg", time.Now().UTC().Format("20020102150405"))
 
-	err = uploadImageS3("mycompany-bucket-picture", imageObjectKey, webcamData.Image)
+	err = uploadImageS3(os.Getenv("S3_BUCKET"), imageObjectKey, webcamData.Image)
 	if err != nil {
 		fmt.Printf("Some error: %s", err.Error())
 		sendError(w, http.StatusInternalServerError, "Failed to upload to S3")
@@ -218,7 +219,7 @@ func WebcamCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("After db insert")
 
-	err = triggerQueue(imageObjectKey, "mycompany-bucket-picture")
+	err = triggerQueue(imageObjectKey, os.Getenv("S3_BUCKET"))
 	if err != nil {
 		fmt.Printf("SQS error: %s", err.Error())
 		sendError(w, http.StatusInternalServerError, "Internal Server Error")
